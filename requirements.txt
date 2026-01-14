@@ -2,3 +2,5 @@ langchain
 langchain-google-genai
 rich
 python-dotenv
+faiss-cpu
+numpy
