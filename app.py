@@ -80,7 +80,15 @@ class AgenticChunker:
         except json.JSONDecodeError:
             # Fallback if JSON fails (rare with Gemini 1.5)
             return [line for line in cleaned_response.split("\n") if line.strip()]
-
+    # Canonicalization Method
+    def _canonicalize_chunk(self, chunk_data):
+        facts = "\n".join(f"- {p}" for p in chunk_data["propositions"])
+        return f"""
+        TITLE: {chunk_data['title']}
+        SUMMARY: {chunk_data['summary']}
+        FACTS:
+        {facts}
+        """.strip()
     # --- PART 2: THE CHUNKING LOGIC ---
     def add_propositions(self, propositions):
         for proposition in propositions:
@@ -169,6 +177,7 @@ class AgenticChunker:
             'embedding': embedding,
             'chunk_index': len(self.chunks)
         }
+
 
         if self.print_logging:
             print(f"Created chunk ({new_chunk_id}): [bold]{new_chunk_title}[/bold]")
